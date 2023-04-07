@@ -1,22 +1,29 @@
 package com.example.fishing.model;
 
-public enum Rank {
-    ROYAL_FLUSH("Royal flush", 0),
-    STRAIGHT_FLUSH("Straight flush", 1),
-    FOUR_OF_A_KIND("Four of a kind", 2),
-    FULL_HOUSE("Full house", 3),
-    FLUSH("Flush", 4),
-    STRAIGHT("Straight", 5),
-    THREE_OF_A_KIND("Three of a kind", 6),
-    TWO_PAIRS("Two pairs", 7),
-    ONE_PAIR("One pair", 8),
-    NOTHING("Nothing", 9);
+import lombok.Getter;
 
-    private String name;
-    private int value;
+public enum Rank {
+    NOTHING("Nothing", 0),
+    ONE_PAIR("One pair", 1),
+    TWO_PAIRS("Two pairs", 2),
+    THREE_OF_A_KIND("Three of a kind", 3),
+    STRAIGHT("Straight", 4),
+    FLUSH("Flush", 5),
+    FULL_HOUSE("Full house", 6),
+    FOUR_OF_A_KIND("Four of a kind", 7),
+    STRAIGHT_FLUSH("Straight flush", 8),
+    ROYAL_FLUSH("Royal flush", 9);
+
+    @Getter
+    private final String name;
+    private final int value;
 
     Rank(String name, int value) {
         this.name = name;
         this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

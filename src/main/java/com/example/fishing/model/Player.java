@@ -8,7 +8,7 @@ import java.util.List;
 public class Player {
     @Getter
     private String name;
-    private List<Integer> wins;
+    private final List<Integer> wins;
     @Getter
     private Hand currentHand;
 
@@ -32,9 +32,5 @@ public class Player {
 
     public int getTotalWins() {
         return wins.size();
-    }
-
-    public void calculateRank() {
-        currentHand.calculateRank();
     }
 }

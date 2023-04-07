@@ -1,7 +1,11 @@
 package com.example.fishing.model;
 
-public class Card {
+import lombok.Getter;
+
+public class Card implements Comparable<Card> {
+    @Getter
     private Suit suit;
+    @Getter
     private int number;
 
     public Card(Suit suit, int number) {
@@ -14,7 +18,7 @@ public class Card {
     }
 
     private String getCardNumber(int number) {
-        if (number == 1) {
+        if (number == 14) {
             return "A";
         } else if (number == 11) {
             return "J";
@@ -24,6 +28,15 @@ public class Card {
             return "K";
         } else {
             return String.valueOf(number);
+        }
+    }
+
+    @Override
+    public int compareTo(Card other) {
+        if (this.number != other.number) {
+            return this.number - other.number;
+        } else {
+            return other.suit.getValue() - this.suit.getValue();
         }
     }
 }

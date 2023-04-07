@@ -1,13 +1,13 @@
 package com.example.fishing.model;
 
 public enum Suit {
-    SPADE("♠", 0),
-    HEART("♥", 1),
-    CLUB("♣", 2),
-    DIAMOND("♦", 3);
+    DIAMOND("♦", 0),
+    CLUB("♣", 1),
+    HEART("♥", 2),
+    SPADE("♠", 3);
 
-    private String shape;
-    private int value;
+    private final String shape;
+    private final int value;
 
     Suit(String shape, int value) {
         this.shape = shape;
@@ -16,5 +16,9 @@ public enum Suit {
 
     public String getShape() {
         return shape;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

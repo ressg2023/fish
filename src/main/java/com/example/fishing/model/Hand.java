@@ -1,16 +1,25 @@
 package com.example.fishing.model;
 
+import com.google.common.annotations.VisibleForTesting;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Hand implements Comparable<Hand> {
-    private Card[] cards;
+    private final Card[] cards;
     private int count;
+    @Getter
     private Rank rank;
+    // bits indicate suits used to compare
+    private int firstComparator;
+    // number used to compare
+    private int secondComparator;
 
     public Hand() {
         cards = new Card[5];
-        count = 0;
     }
 
     public void assignCard(Card card) {
@@ -19,14 +28,147 @@ public class Hand implements Comparable<Hand> {
             return;
         }
         cards[count++] = card;
+        if (count == 5) {
+            calculate();
+        }
     }
 
-    public void calculateRank() {
-        // rank;
+    @VisibleForTesting
+    void calculate() {
+        Arrays.sort(cards);
+        if (getCountOfSuit(cards) == 1 && isSequence(cards)) {
+            if (cards[0].getNumber() == 10) {
+                rank = Rank.ROYAL_FLUSH;
+            } else {
+                rank = Rank.STRAIGHT_FLUSH;
+                if (cards[4].getNumber() == 14 && cards[3].getNumber() == 5) {
+                    secondComparator = cards[3].getNumber();
+                } else {
+                    secondComparator = cards[4].getNumber();
+                }
+            }
+            firstComparator = 1 << cards[0].getSuit().getValue();
+        } else if (getCountOfTopNumber(cards) == 4) {
+            rank = Rank.FOUR_OF_A_KIND;
+            secondComparator = getFourOfAKindNumber(cards);
+        } else if (getCountOfNumber(cards) == 2) {
+            rank = Rank.FULL_HOUSE;
+            firstComparator = getSuitsForFullHouse(cards);
+            secondComparator = cards[2].getNumber();
+        } else if (getCountOfSuit(cards) == 1) {
+            rank = Rank.FLUSH;
+            firstComparator = 1 << cards[0].getSuit().getValue();
+            secondComparator = cards[4].getNumber();
+        } else if (isSequence(cards)) {
+            rank = Rank.STRAIGHT;
+            if (cards[4].getNumber() == 14 && cards[3].getNumber() == 5) {
+                firstComparator= cards[3].getNumber();
+            } else {
+                firstComparator= cards[4].getNumber();
+            }
+            secondComparator = 1 << cards[4].getSuit().getValue();
+        } else if (getCountOfTopNumber(cards) == 3) {
+            rank = Rank.THREE_OF_A_KIND;
+            secondComparator = getNumberForRank(cards);
+        } else if (getCountOfNumber(cards) == 3) {
+            rank = Rank.TWO_PAIRS;
+            firstComparator = getNumberForRank(cards);
+            secondComparator = getSuitsForRank(cards);
+        } else if (getCountOfNumber(cards) == 4) {
+            rank = Rank.ONE_PAIR;
+            firstComparator = getNumberForRank(cards);
+            secondComparator = getSuitsForRank(cards);
+        } else {
+            rank = Rank.NOTHING;
+            // todo does the highest rank means all cards or only the top one card
+            firstComparator = cards[4].getNumber();
+            secondComparator = 1 << cards[4].getSuit().getValue();
+        }
+    }
+
+    @VisibleForTesting
+    boolean isSequence(Card[] cards) {
+        return cards[0].getNumber() + 1 == cards[1].getNumber()
+                && cards[1].getNumber() + 1 == cards[2].getNumber()
+                && cards[2].getNumber() + 1 == cards[3].getNumber()
+                && (cards[3].getNumber() + 1 == cards[4].getNumber() || (cards[3].getNumber() == 5 && cards[4].getNumber() == 14));
+    }
+
+    @VisibleForTesting
+    int getCountOfTopNumber(Card[] cards) {
+        Map<Integer, Long> map = Arrays.stream(cards).collect(Collectors.groupingBy(Card::getNumber, Collectors.mapping(Card::getSuit, Collectors.counting())));
+        long result = 1;
+        for (Map.Entry<Integer, Long> entry: map.entrySet()) {
+            if (entry.getValue() > result) {
+                result = entry.getValue();
+            }
+        }
+        return (int) result;
+    }
+
+    @VisibleForTesting
+    int getCountOfSuit(Card[] cards) {
+        return (int) Arrays.stream(cards).map(Card::getSuit).distinct().count();
+    }
+
+    @VisibleForTesting
+    int getCountOfNumber(Card[] cards) {
+        return (int) Arrays.stream(cards).map(Card::getNumber).distinct().count();
+    }
+
+    @VisibleForTesting
+    int getFourOfAKindNumber(Card[] cards) {
+        for (int i=0; i<cards.length-1; i++) {
+            if (cards[i].getNumber() == cards[i+1].getNumber()) {
+                return cards[i].getNumber();
+            }
+        }
+        return -1;
+    }
+
+    @VisibleForTesting
+    int getSuitsForFullHouse(Card[] cards) {
+        int suits = 0;
+        if (cards[1].getNumber() == cards[2].getNumber()) {
+            suits += 1 << cards[0].getSuit().getValue();
+            suits += 1 << cards[1].getSuit().getValue();
+        } else {
+            suits += 1 << cards[3].getSuit().getValue();
+            suits += 1 << cards[4].getSuit().getValue();
+        }
+        suits += 1 << cards[2].getSuit().getValue();
+        return suits;
+    }
+
+    @VisibleForTesting
+    int getNumberForRank(Card[] cards) {
+        for (int i=4; i>0; i--) {
+            if (cards[i].getNumber() == cards[i-1].getNumber()) {
+                return cards[i].getNumber();
+            }
+        }
+        return -1;
+    }
+
+    @VisibleForTesting
+    int getSuitsForRank(Card[] cards) {
+        for (int i=4; i>0; i--) {
+            if (cards[i].getNumber() == cards[i-1].getNumber()) {
+                int suits = 0;
+                suits += 1 << cards[i].getSuit().getValue();
+                suits += 1 << cards[i-1].getSuit().getValue();
+                return suits;
+            }
+        }
+        return 0;
     }
 
     @Override
     public int compareTo(Hand other) {
-        return 0;
+        if (this.rank == other.rank) {
+            return this.firstComparator == other.firstComparator ? this.secondComparator - other.secondComparator : this.firstComparator - other.firstComparator;
+        } else {
+            return this.rank.getValue() - other.rank.getValue();
+        }
     }
 }

@@ -2,8 +2,8 @@ package com.example.fishing.command;
 
 import com.example.fishing.model.Card;
 import com.example.fishing.model.Deck;
-import com.example.fishing.model.Hand;
 import com.example.fishing.model.Player;
+import com.google.common.annotations.VisibleForTesting;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -16,7 +16,7 @@ import static com.example.fishing.util.printUtil.*;
 
 @ShellComponent
 public class CardCommand {
-    private Player[] players = null;
+    private Player[] players;
     private Deck deck = null;
     private boolean started = false;
     private int total = 0;
@@ -50,7 +50,8 @@ public class CardCommand {
         players = new Player[numberOfPlayers];
         for (int i=0; i<numberOfPlayers; i++) {
             printLine("Please enter player %d's name (name will be truncated to at most 10 characters):", i+1);
-            String name = scanner.nextLine().substring(0, 10);
+            String line = scanner.nextLine();
+            String name = line.substring(0, Math.min(10, line.length()));
             players[i] = new Player(name);
         }
 
@@ -59,7 +60,7 @@ public class CardCommand {
         deck = new Deck();
         deck.shuffle();
 
-        scanner.close();
+        started = true;
     }
 
     @ShellMethod(key = "start-round", value = "Start the next round of game")
@@ -75,7 +76,7 @@ public class CardCommand {
         dealCards(deck, players);
         int winner = getWinner(players);
         players[winner].winRound(current);
-        printLine("Winner of round %d is %s", current+1, players[winner]);
+        printLine("Winner of round %d is %s with a %s", current+1, players[winner].getName(), players[winner].getCurrentHand().getRank().getName());
 
         current++;
         if (current == total) {
@@ -100,12 +101,12 @@ public class CardCommand {
         }
     }
 
-    private int getWinner(Player[] players) {
+    @VisibleForTesting
+    int getWinner(Player[] players) {
         int winner = -1;
         for (int i=0; i<players.length; i++) {
-            players[i].calculateRank();
             if (winner != -1) {
-                if (players[i].getCurrentHand() > players[winner].getCurrentHand()) {
+                if (players[i].getCurrentHand().compareTo(players[winner].getCurrentHand()) > 0) {
                     winner = i;
                 }
             } else {
