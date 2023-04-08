@@ -2,6 +2,8 @@ package com.example.fishing.model;
 
 import lombok.Getter;
 
+import static com.example.fishing.util.RankUtil.getCardNumber;
+
 public class Card implements Comparable<Card> {
     @Getter
     private Suit suit;
@@ -15,20 +17,6 @@ public class Card implements Comparable<Card> {
 
     public String toString() {
         return suit.getShape() + getCardNumber(number);
-    }
-
-    private String getCardNumber(int number) {
-        if (number == 14) {
-            return "A";
-        } else if (number == 11) {
-            return "J";
-        } else if (number == 12) {
-            return "Q";
-        } else if (number == 13) {
-            return "K";
-        } else {
-            return String.valueOf(number);
-        }
     }
 
     @Override

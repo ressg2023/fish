@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.fishing.util.RankUtil.getCardNumber;
+
 @Slf4j
 public class Hand implements Comparable<Hand> {
     private final Card[] cards;
@@ -17,6 +19,7 @@ public class Hand implements Comparable<Hand> {
     private int firstComparator;
     // number used to compare
     private int secondComparator;
+    private boolean isSuitMoreImportant = true;
 
     public Hand() {
         cards = new Card[5];
@@ -28,13 +31,9 @@ public class Hand implements Comparable<Hand> {
             return;
         }
         cards[count++] = card;
-        if (count == 5) {
-            calculate();
-        }
     }
 
-    @VisibleForTesting
-    void calculate() {
+    public void calculate() {
         Arrays.sort(cards);
         if (getCountOfSuit(cards) == 1 && isSequence(cards)) {
             if (cards[0].getNumber() == 10) {
@@ -48,17 +47,21 @@ public class Hand implements Comparable<Hand> {
                 }
             }
             firstComparator = 1 << cards[0].getSuit().getValue();
+            isSuitMoreImportant = true;
         } else if (getCountOfTopNumber(cards) == 4) {
             rank = Rank.FOUR_OF_A_KIND;
-            secondComparator = getFourOfAKindNumber(cards);
+            firstComparator = getFourOfAKindNumber(cards);
+            isSuitMoreImportant = false;
         } else if (getCountOfNumber(cards) == 2) {
             rank = Rank.FULL_HOUSE;
             firstComparator = getSuitsForFullHouse(cards);
             secondComparator = cards[2].getNumber();
+            isSuitMoreImportant = true;
         } else if (getCountOfSuit(cards) == 1) {
             rank = Rank.FLUSH;
             firstComparator = 1 << cards[0].getSuit().getValue();
             secondComparator = cards[4].getNumber();
+            isSuitMoreImportant = true;
         } else if (isSequence(cards)) {
             rank = Rank.STRAIGHT;
             if (cards[4].getNumber() == 14 && cards[3].getNumber() == 5) {
@@ -67,22 +70,27 @@ public class Hand implements Comparable<Hand> {
                 firstComparator= cards[4].getNumber();
             }
             secondComparator = 1 << cards[4].getSuit().getValue();
+            isSuitMoreImportant = false;
         } else if (getCountOfTopNumber(cards) == 3) {
             rank = Rank.THREE_OF_A_KIND;
-            secondComparator = getNumberForRank(cards);
+            firstComparator = getNumberForRank(cards);
+            isSuitMoreImportant = false;
         } else if (getCountOfNumber(cards) == 3) {
             rank = Rank.TWO_PAIRS;
             firstComparator = getNumberForRank(cards);
             secondComparator = getSuitsForRank(cards);
+            isSuitMoreImportant = false;
         } else if (getCountOfNumber(cards) == 4) {
             rank = Rank.ONE_PAIR;
             firstComparator = getNumberForRank(cards);
             secondComparator = getSuitsForRank(cards);
+            isSuitMoreImportant = false;
         } else {
             rank = Rank.NOTHING;
             // todo does the highest rank means all cards or only the top one card
             firstComparator = cards[4].getNumber();
             secondComparator = 1 << cards[4].getSuit().getValue();
+            isSuitMoreImportant = false;
         }
     }
 
@@ -161,6 +169,37 @@ public class Hand implements Comparable<Hand> {
             }
         }
         return 0;
+    }
+
+    public String getDescription() {
+        StringBuilder sb = new StringBuilder();
+        if (firstComparator > 0) {
+            if (isSuitMoreImportant) {
+                sb.append("suit ").append(convertToSuit(firstComparator));
+            } else {
+                sb.append("rank ").append(getCardNumber(firstComparator));
+            }
+        }
+        if (secondComparator > 0) {
+            if (sb.length() > 0) {
+                sb.append(" and ");
+            }
+            if (isSuitMoreImportant) {
+                sb.append("rank ").append(getCardNumber(secondComparator));
+            } else {
+                sb.append("suit ").append(convertToSuit(secondComparator));
+            }
+        }
+        return sb.toString();
+    }
+
+    private String convertToSuit(int input) {
+        int suit = 0;
+        while (input > 0) {
+            input = input >> 1;
+            suit++;
+        }
+        return Objects.requireNonNull(Suit.fromValue(suit-1)).getShape();
     }
 
     @Override

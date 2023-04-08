@@ -33,4 +33,8 @@ public class Player {
     public int getTotalWins() {
         return wins.size();
     }
+
+    public void calculate() {
+        currentHand.calculate();
+    }
 }

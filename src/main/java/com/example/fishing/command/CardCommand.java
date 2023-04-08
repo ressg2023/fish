@@ -74,6 +74,7 @@ public class CardCommand {
 
         deck.shuffle();
         dealCards(deck, players);
+        calculateRank(players);
         int winner = getWinner(players);
         players[winner].winRound(current);
         printLine("Winner of round %d is %s with a %s", current+1, players[winner].getName(), players[winner].getCurrentHand().getRank().getName());
@@ -98,6 +99,13 @@ public class CardCommand {
             if (i%players.length == players.length-1) {
                 printLine("");
             }
+        }
+    }
+
+    private void calculateRank(Player[] players) {
+        for (Player player : players) {
+            player.calculate();
+            printLine("%s has %s with %s", player.getName(), player.getCurrentHand().getRank().getName(), player.getCurrentHand().getDescription());
         }
     }
 
