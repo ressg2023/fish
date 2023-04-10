@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class printUtil {
+public class PrintUtil {
     public static void printLine(String line, Object... args) {
         System.out.printf((line) + "%n", args);
     }

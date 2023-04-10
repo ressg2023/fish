@@ -24,7 +24,7 @@ public class Card implements Comparable<Card> {
         if (this.number != other.number) {
             return this.number - other.number;
         } else {
-            return other.suit.getValue() - this.suit.getValue();
+            return this.suit.getValue() - other.suit.getValue();
         }
     }
 }

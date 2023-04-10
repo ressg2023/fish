@@ -16,14 +16,11 @@ public enum Rank {
 
     @Getter
     private final String name;
+    @Getter
     private final int value;
 
     Rank(String name, int value) {
         this.name = name;
         this.value = value;
-    }
-
-    public int getValue() {
-        return value;
     }
 }

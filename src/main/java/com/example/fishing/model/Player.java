@@ -1,15 +1,19 @@
 package com.example.fishing.model;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class Player {
     @Getter
     private String name;
     private final List<Integer> wins;
     @Getter
+    @Setter
     private Hand currentHand;
 
     public Player(String name) {
@@ -22,12 +26,12 @@ public class Player {
         wins.add(round);
     }
 
-    public void resetHand() {
-        currentHand = new Hand();
-    }
-
     public void assignCard(Card card) {
-        currentHand.assignCard(card);
+        if (currentHand == null) {
+            log.warn("Current Hand is empty");
+        } else {
+            currentHand.assignCard(card);
+        }
     }
 
     public int getTotalWins() {
@@ -35,6 +39,10 @@ public class Player {
     }
 
     public void calculate() {
-        currentHand.calculate();
+        if (currentHand == null) {
+            log.warn("Current Hand is empty");
+        } else {
+            currentHand.calculate();
+        }
     }
 }

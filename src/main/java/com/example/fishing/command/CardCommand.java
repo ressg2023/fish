@@ -2,6 +2,7 @@ package com.example.fishing.command;
 
 import com.example.fishing.model.Card;
 import com.example.fishing.model.Deck;
+import com.example.fishing.model.Hand;
 import com.example.fishing.model.Player;
 import com.google.common.annotations.VisibleForTesting;
 import org.springframework.shell.standard.ShellComponent;
@@ -12,7 +13,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.Scanner;
 
-import static com.example.fishing.util.printUtil.*;
+import static com.example.fishing.util.PrintUtil.*;
 
 @ShellComponent
 public class CardCommand {
@@ -88,7 +89,7 @@ public class CardCommand {
 
     private void dealCards(Deck deck, Player[] players) {
         for (Player player: players) {
-            player.resetHand();
+            player.setCurrentHand(new Hand());
             printString("%-20s", player.getName());
         }
         printLine("");

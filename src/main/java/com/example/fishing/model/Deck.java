@@ -1,9 +1,12 @@
 package com.example.fishing.model;
 
+import lombok.Getter;
+
 public class Deck {
+    @Getter
     private final Card[] cards = new Card[52];
 
-    private static int DEFAULT_SHUFFLE_TIMES = 100;
+    static int DEFAULT_SHUFFLE_TIMES = 100;
 
     public Deck() {
         int seq = 0;
@@ -25,6 +28,9 @@ public class Deck {
     }
 
     public Card getCard(int index) {
+        if (index < 0 || index >= 52) {
+            return null;
+        }
         return cards[index];
     }
 }
