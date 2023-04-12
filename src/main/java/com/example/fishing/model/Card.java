@@ -2,27 +2,25 @@ package com.example.fishing.model;
 
 import lombok.Getter;
 
-import static com.example.fishing.util.RankUtil.getCardNumber;
-
 public class Card implements Comparable<Card> {
     @Getter
     private Suit suit;
     @Getter
-    private int number;
+    private Rank rank;
 
-    public Card(Suit suit, int number) {
+    public Card(Suit suit, Rank rank) {
         this.suit = suit;
-        this.number = number;
+        this.rank = rank;
     }
 
     public String toString() {
-        return suit.getShape() + getCardNumber(number);
+        return suit.getShape() + rank.getName();
     }
 
     @Override
     public int compareTo(Card other) {
-        if (this.number != other.number) {
-            return this.number - other.number;
+        if (this.rank != other.rank) {
+            return this.rank.getValue() - other.rank.getValue();
         } else {
             return this.suit.getValue() - other.suit.getValue();
         }

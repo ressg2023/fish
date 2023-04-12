@@ -1,6 +1,5 @@
 package com.example.fishing.model;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +8,7 @@ class DeckTest {
     @Test
     void testConstructor() {
         Card card = (new Deck()).getCard(1);
-        assertEquals(3, card.getNumber());
+        assertEquals(Rank.THREE, card.getRank());
         assertEquals(Suit.DIAMOND, card.getSuit());
     }
 
@@ -21,7 +20,7 @@ class DeckTest {
             int random = (int) (Math.random() * 52);
             int originalNumber = random%13 + 2;
             Suit originalSuit = Suit.fromValue(random/13);
-            if (deck.getCard(random).getNumber() != originalNumber || deck.getCard(random).getSuit() != originalSuit) {
+            if (deck.getCard(random).getRank().getValue() != originalNumber || deck.getCard(random).getSuit() != originalSuit) {
                 changed++;
             }
         }
@@ -34,7 +33,7 @@ class DeckTest {
             int random = (int) (Math.random() * 52);
             int originalNumber = random%13 + 2;
             Suit originalSuit = Suit.fromValue(random/13);
-            if (deck.getCard(random).getNumber() != originalNumber || deck.getCard(random).getSuit() != originalSuit) {
+            if (deck.getCard(random).getRank().getValue() != originalNumber || deck.getCard(random).getSuit() != originalSuit) {
                 changed++;
             }
         }
@@ -44,7 +43,7 @@ class DeckTest {
     @Test
     void testGetCard() {
         Deck deck = new Deck();
-        assertEquals(14, deck.getCard(51).getNumber());
+        assertEquals(Rank.ACE, deck.getCard(51).getRank());
         assertEquals(Suit.SPADE, deck.getCard(51).getSuit());
     }
 

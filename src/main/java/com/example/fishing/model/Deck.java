@@ -1,6 +1,7 @@
 package com.example.fishing.model;
 
 import lombok.Getter;
+import org.checkerframework.checker.units.qual.C;
 
 public class Deck {
     @Getter
@@ -11,8 +12,8 @@ public class Deck {
     public Deck() {
         int seq = 0;
         for (Suit suit: Suit.values()) {
-            for (int i=2; i<=14; i++) {
-                cards[seq++] = new Card(suit, i);
+            for (Rank rank: Rank.values()) {
+                cards[seq++] = new Card(suit, rank);
             }
         }
     }

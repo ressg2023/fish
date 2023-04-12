@@ -1,9 +1,5 @@
 package com.example.fishing.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,160 +9,160 @@ class HandTest {
     void testConstructor() {
         Hand actualHand = new Hand();
         assertEquals("", actualHand.getDescription());
-        assertNull(actualHand.getRank());
+        assertNull(actualHand.getDeckRank());
     }
 
     @Test
     void testAssignCard() {
         Hand hand = new Hand();
-        hand.assignCard(new Card(Suit.DIAMOND, 10));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.TEN));
         assertEquals(1, hand.getCards().size());
-        hand.assignCard(new Card(Suit.DIAMOND, 10));
-        hand.assignCard(new Card(Suit.DIAMOND, 10));
-        hand.assignCard(new Card(Suit.DIAMOND, 10));
-        hand.assignCard(new Card(Suit.DIAMOND, 10));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.TEN));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.TEN));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.TEN));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.TEN));
         assertEquals(5, hand.getCards().size());
-        hand.assignCard(new Card(Suit.DIAMOND, 10));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.TEN));
         assertEquals(5, hand.getCards().size());
     }
 
     @Test
     void testCalculate() {
         Hand hand = new Hand();
-        hand.assignCard(new Card(Suit.SPADE, 11));
-        hand.assignCard(new Card(Suit.SPADE, 12));
-        hand.assignCard(new Card(Suit.SPADE, 13));
-        hand.assignCard(new Card(Suit.SPADE, 14));
-        hand.assignCard(new Card(Suit.SPADE, 10));
+        hand.assignCard(new Card(Suit.SPADE, Rank.JACK));
+        hand.assignCard(new Card(Suit.SPADE, Rank.QUEEN));
+        hand.assignCard(new Card(Suit.SPADE, Rank.KING));
+        hand.assignCard(new Card(Suit.SPADE, Rank.ACE));
+        hand.assignCard(new Card(Suit.SPADE, Rank.TEN));
         hand.calculate();
-        assertEquals(Rank.ROYAL_FLUSH, hand.getRank());
+        assertEquals(DeckRank.ROYAL_FLUSH, hand.getDeckRank());
         assertEquals(0B1000, hand.getFirstComparator());
         assertTrue(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 11));
-        hand.assignCard(new Card(Suit.HEART, 7));
-        hand.assignCard(new Card(Suit.HEART, 8));
-        hand.assignCard(new Card(Suit.HEART, 9));
-        hand.assignCard(new Card(Suit.HEART, 10));
+        hand.assignCard(new Card(Suit.HEART, Rank.JACK));
+        hand.assignCard(new Card(Suit.HEART, Rank.SEVEN));
+        hand.assignCard(new Card(Suit.HEART, Rank.EIGHT));
+        hand.assignCard(new Card(Suit.HEART, Rank.NINE));
+        hand.assignCard(new Card(Suit.HEART, Rank.TEN));
         hand.calculate();
-        assertEquals(Rank.STRAIGHT_FLUSH, hand.getRank());
+        assertEquals(DeckRank.STRAIGHT_FLUSH, hand.getDeckRank());
         assertEquals(0B0100, hand.getFirstComparator());
         assertTrue(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.DIAMOND, 4));
-        hand.assignCard(new Card(Suit.DIAMOND, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 2));
-        hand.assignCard(new Card(Suit.DIAMOND, 5));
-        hand.assignCard(new Card(Suit.DIAMOND, 14));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.FOUR));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.TWO));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.FIVE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.ACE));
         hand.calculate();
-        assertEquals(Rank.STRAIGHT_FLUSH, hand.getRank());
+        assertEquals(DeckRank.STRAIGHT_FLUSH, hand.getDeckRank());
         assertEquals(0B0001, hand.getFirstComparator());
         assertTrue(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 4));
-        hand.assignCard(new Card(Suit.CLUB, 4));
-        hand.assignCard(new Card(Suit.DIAMOND, 4));
-        hand.assignCard(new Card(Suit.DIAMOND, 3));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.FOUR));
+        hand.assignCard(new Card(Suit.CLUB, Rank.FOUR));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.FOUR));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.THREE));
         hand.calculate();
-        assertEquals(Rank.FOUR_OF_A_KIND, hand.getRank());
+        assertEquals(DeckRank.FOUR_OF_A_KIND, hand.getDeckRank());
         assertEquals(4, hand.getFirstComparator());
         assertFalse(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 4));
-        hand.assignCard(new Card(Suit.CLUB, 4));
-        hand.assignCard(new Card(Suit.CLUB, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 3));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.FOUR));
+        hand.assignCard(new Card(Suit.CLUB, Rank.FOUR));
+        hand.assignCard(new Card(Suit.CLUB, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.THREE));
         hand.calculate();
-        assertEquals(Rank.FULL_HOUSE, hand.getRank());
+        assertEquals(DeckRank.FULL_HOUSE, hand.getDeckRank());
         assertEquals(0B1110, hand.getFirstComparator());
         assertEquals(4, hand.getSecondComparator());
         assertTrue(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.HEART, 2));
-        hand.assignCard(new Card(Suit.HEART, 7));
-        hand.assignCard(new Card(Suit.HEART, 5));
-        hand.assignCard(new Card(Suit.HEART, 3));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.HEART, Rank.TWO));
+        hand.assignCard(new Card(Suit.HEART, Rank.SEVEN));
+        hand.assignCard(new Card(Suit.HEART, Rank.FIVE));
+        hand.assignCard(new Card(Suit.HEART, Rank.THREE));
         hand.calculate();
-        assertEquals(Rank.FLUSH, hand.getRank());
+        assertEquals(DeckRank.FLUSH, hand.getDeckRank());
         assertEquals(0B0100, hand.getFirstComparator());
         assertEquals(7, hand.getSecondComparator());
         assertTrue(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 5));
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 6));
-        hand.assignCard(new Card(Suit.CLUB, 7));
+        hand.assignCard(new Card(Suit.HEART, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.FIVE));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.SIX));
+        hand.assignCard(new Card(Suit.CLUB, Rank.SEVEN));
         hand.calculate();
-        assertEquals(Rank.STRAIGHT, hand.getRank());
+        assertEquals(DeckRank.STRAIGHT, hand.getDeckRank());
         assertEquals(7, hand.getFirstComparator());
         assertEquals(0B0010, hand.getSecondComparator());
         assertFalse(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 5));
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 14));
-        hand.assignCard(new Card(Suit.CLUB, 2));
+        hand.assignCard(new Card(Suit.HEART, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.FIVE));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.ACE));
+        hand.assignCard(new Card(Suit.CLUB, Rank.TWO));
         hand.calculate();
-        assertEquals(Rank.STRAIGHT, hand.getRank());
+        assertEquals(DeckRank.STRAIGHT, hand.getDeckRank());
         assertEquals(5, hand.getFirstComparator());
         assertEquals(0B1000, hand.getSecondComparator());
         assertFalse(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 3));
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 3));
-        hand.assignCard(new Card(Suit.CLUB, 2));
+        hand.assignCard(new Card(Suit.HEART, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.THREE));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.THREE));
+        hand.assignCard(new Card(Suit.CLUB, Rank.TWO));
         hand.calculate();
-        assertEquals(Rank.THREE_OF_A_KIND, hand.getRank());
+        assertEquals(DeckRank.THREE_OF_A_KIND, hand.getDeckRank());
         assertEquals(3, hand.getFirstComparator());
         assertFalse(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 3));
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 4));
-        hand.assignCard(new Card(Suit.CLUB, 2));
+        hand.assignCard(new Card(Suit.HEART, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.THREE));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.FOUR));
+        hand.assignCard(new Card(Suit.CLUB, Rank.TWO));
         hand.calculate();
-        assertEquals(Rank.TWO_PAIRS, hand.getRank());
+        assertEquals(DeckRank.TWO_PAIRS, hand.getDeckRank());
         assertEquals(4, hand.getFirstComparator());
         assertEquals(0B1100, hand.getSecondComparator());
         assertFalse(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 5));
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 4));
-        hand.assignCard(new Card(Suit.CLUB, 2));
+        hand.assignCard(new Card(Suit.HEART, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.FIVE));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.FOUR));
+        hand.assignCard(new Card(Suit.CLUB, Rank.TWO));
         hand.calculate();
-        assertEquals(Rank.ONE_PAIR, hand.getRank());
+        assertEquals(DeckRank.ONE_PAIR, hand.getDeckRank());
         assertEquals(4, hand.getFirstComparator());
         assertEquals(0B1100, hand.getSecondComparator());
         assertFalse(hand.isSuitMoreImportant());
 
         hand = new Hand();
-        hand.assignCard(new Card(Suit.HEART, 3));
-        hand.assignCard(new Card(Suit.DIAMOND, 5));
-        hand.assignCard(new Card(Suit.HEART, 4));
-        hand.assignCard(new Card(Suit.SPADE, 7));
-        hand.assignCard(new Card(Suit.CLUB, 2));
+        hand.assignCard(new Card(Suit.HEART, Rank.THREE));
+        hand.assignCard(new Card(Suit.DIAMOND, Rank.FIVE));
+        hand.assignCard(new Card(Suit.HEART, Rank.FOUR));
+        hand.assignCard(new Card(Suit.SPADE, Rank.SEVEN));
+        hand.assignCard(new Card(Suit.CLUB, Rank.TWO));
         hand.calculate();
-        assertEquals(Rank.NOTHING, hand.getRank());
+        assertEquals(DeckRank.NOTHING, hand.getDeckRank());
         assertEquals(7, hand.getFirstComparator());
         assertEquals(0B1000, hand.getSecondComparator());
         assertFalse(hand.isSuitMoreImportant());
@@ -202,29 +198,29 @@ class HandTest {
     @Test
     void testCompareTo() {
         Hand hand = new Hand();
-        hand.setRank(Rank.ROYAL_FLUSH);
+        hand.setDeckRank(DeckRank.ROYAL_FLUSH);
         Hand other = new Hand();
-        other.setRank(Rank.STRAIGHT);
+        other.setDeckRank(DeckRank.STRAIGHT);
         assertTrue(hand.compareTo(other) > 0);
 
-        hand.setRank(Rank.FOUR_OF_A_KIND);
+        hand.setDeckRank(DeckRank.FOUR_OF_A_KIND);
         hand.setFirstComparator(12);
-        other.setRank(Rank.FOUR_OF_A_KIND);
+        other.setDeckRank(DeckRank.FOUR_OF_A_KIND);
         other.setFirstComparator(11);
         assertTrue(hand.compareTo(other) > 0);
 
-        hand.setRank(Rank.FULL_HOUSE);
+        hand.setDeckRank(DeckRank.FULL_HOUSE);
         hand.setFirstComparator(0B1000);
         hand.setSecondComparator(14);
-        other.setRank(Rank.FULL_HOUSE);
+        other.setDeckRank(DeckRank.FULL_HOUSE);
         other.setFirstComparator(0B1000);
         other.setSecondComparator(13);
         assertTrue(hand.compareTo(other) > 0);
 
-        hand.setRank(Rank.TWO_PAIRS);
+        hand.setDeckRank(DeckRank.TWO_PAIRS);
         hand.setFirstComparator(0B1000);
         hand.setSecondComparator(14);
-        other.setRank(Rank.TWO_PAIRS);
+        other.setDeckRank(DeckRank.TWO_PAIRS);
         other.setFirstComparator(0B1000);
         other.setSecondComparator(14);
         assertEquals(0, hand.compareTo(other));

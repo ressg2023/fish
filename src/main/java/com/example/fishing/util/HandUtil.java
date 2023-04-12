@@ -1,6 +1,7 @@
 package com.example.fishing.util;
 
 import com.example.fishing.model.Card;
+import com.example.fishing.model.Rank;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,16 +15,16 @@ public class HandUtil {
         if (sortedCards.size() != 5) {
             return false;
         }
-        return sortedCards.get(0).getNumber() + 1 == sortedCards.get(1).getNumber()
-                && sortedCards.get(1).getNumber() + 1 == sortedCards.get(2).getNumber()
-                && sortedCards.get(2).getNumber() + 1 == sortedCards.get(3).getNumber()
-                && (sortedCards.get(3).getNumber() + 1 == sortedCards.get(4).getNumber() || (sortedCards.get(3).getNumber() == 5 && sortedCards.get(4).getNumber() == 14));
+        return sortedCards.get(0).getRank().getValue() + 1 == sortedCards.get(1).getRank().getValue()
+                && sortedCards.get(1).getRank().getValue() + 1 == sortedCards.get(2).getRank().getValue()
+                && sortedCards.get(2).getRank().getValue() + 1 == sortedCards.get(3).getRank().getValue()
+                && (sortedCards.get(3).getRank().getValue() + 1 == sortedCards.get(4).getRank().getValue() || (sortedCards.get(3).getRank() == Rank.FIVE && sortedCards.get(4).getRank() == Rank.ACE));
     }
 
-    public static int getCountOfTopNumber(List<Card> sortedCards) {
-        Map<Integer, Long> map = sortedCards.stream().collect(Collectors.groupingBy(Card::getNumber, Collectors.mapping(Card::getSuit, Collectors.counting())));
+    public static int getCountOfTopRank(List<Card> sortedCards) {
+        Map<Rank, Long> map = sortedCards.stream().collect(Collectors.groupingBy(Card::getRank, Collectors.mapping(Card::getSuit, Collectors.counting())));
         long result = 0;
-        for (Map.Entry<Integer, Long> entry: map.entrySet()) {
+        for (Map.Entry<Rank, Long> entry: map.entrySet()) {
             if (entry.getValue() > result) {
                 result = entry.getValue();
             }
@@ -35,17 +36,17 @@ public class HandUtil {
         return (int) sortedCards.stream().map(Card::getSuit).distinct().count();
     }
 
-    public static int getCountOfNumber(List<Card> sortedCards) {
-        return (int) sortedCards.stream().map(Card::getNumber).distinct().count();
+    public static int getCountOfRank(List<Card> sortedCards) {
+        return (int) sortedCards.stream().map(Card::getRank).distinct().count();
     }
 
-    public static int getFourOfAKindNumber(List<Card> sortedCards) {
-        if (getCountOfTopNumber(sortedCards) != 4) {
+    public static int getFourOfAKindRank(List<Card> sortedCards) {
+        if (getCountOfTopRank(sortedCards) != 4) {
             return -1;
         }
         for (int i=0; i<sortedCards.size()-1; i++) {
-            if (sortedCards.get(i).getNumber() == sortedCards.get(i+1).getNumber()) {
-                return sortedCards.get(i).getNumber();
+            if (sortedCards.get(i).getRank() == sortedCards.get(i+1).getRank()) {
+                return sortedCards.get(i).getRank().getValue();
             }
         }
         return -1;
@@ -53,7 +54,7 @@ public class HandUtil {
 
     public static int getSuitsForFullHouse(List<Card> sortedCards) {
         int suits = 0;
-        if (sortedCards.get(1).getNumber() == sortedCards.get(2).getNumber()) {
+        if (sortedCards.get(1).getRank() == sortedCards.get(2).getRank()) {
             suits += 1 << sortedCards.get(0).getSuit().getValue();
             suits += 1 << sortedCards.get(1).getSuit().getValue();
         } else {
@@ -64,10 +65,10 @@ public class HandUtil {
         return suits;
     }
 
-    public static int getNumberForRank(List<Card> sortedCards) {
+    public static int getRankNumber(List<Card> sortedCards) {
         for (int i=4; i>0; i--) {
-            if (sortedCards.get(i).getNumber() == sortedCards.get(i-1).getNumber()) {
-                return sortedCards.get(i).getNumber();
+            if (sortedCards.get(i).getRank() == sortedCards.get(i-1).getRank()) {
+                return sortedCards.get(i).getRank().getValue();
             }
         }
         return -1;
@@ -75,7 +76,7 @@ public class HandUtil {
 
     public static int getSuitsForRank(List<Card> sortedCards) {
         for (int i=4; i>0; i--) {
-            if (sortedCards.get(i).getNumber() == sortedCards.get(i-1).getNumber()) {
+            if (sortedCards.get(i).getRank() == sortedCards.get(i-1).getRank()) {
                 int suits = 0;
                 suits += 1 << sortedCards.get(i).getSuit().getValue();
                 suits += 1 << sortedCards.get(i-1).getSuit().getValue();

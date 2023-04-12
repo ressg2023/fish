@@ -32,7 +32,7 @@ class PlayerTest {
 
         Player player = new Player("Name");
         player.setCurrentHand(mockHand);
-        Card card = new Card(Suit.DIAMOND, 10);
+        Card card = new Card(Suit.DIAMOND, Rank.TEN);
         player.assignCard(card);
         verify(mockHand).assignCard(card);
     }

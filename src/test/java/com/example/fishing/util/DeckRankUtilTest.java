@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-class RankUtilTest {
+class DeckRankUtilTest {
     @Test
     void testGetCardNumber() {
         assertEquals("10", RankUtil.getCardNumber(10));

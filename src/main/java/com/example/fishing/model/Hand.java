@@ -1,6 +1,5 @@
 package com.example.fishing.model;
 
-import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,7 @@ import static com.example.fishing.util.RankUtil.getCardNumber;
 @Setter
 public class Hand implements Comparable<Hand> {
     private final List<Card> cards;
-    private Rank rank;
+    private DeckRank deckRank;
     // bits indicate suits used to compare
     private int firstComparator;
     // number used to compare
@@ -37,59 +36,59 @@ public class Hand implements Comparable<Hand> {
     public void calculate() {
         Collections.sort(cards);
         if (getCountOfSuit(cards) == 1 && isSequence(cards)) {
-            if (cards.get(0).getNumber() == 10) {
-                rank = Rank.ROYAL_FLUSH;
+            if (cards.get(0).getRank() == Rank.TEN) {
+                deckRank = DeckRank.ROYAL_FLUSH;
             } else {
-                rank = Rank.STRAIGHT_FLUSH;
-                if (cards.get(4).getNumber() == 14 && cards.get(3).getNumber() == 5) {
-                    secondComparator = cards.get(3).getNumber();
+                deckRank = DeckRank.STRAIGHT_FLUSH;
+                if (cards.get(4).getRank() == Rank.ACE && cards.get(3).getRank() == Rank.FIVE) {
+                    secondComparator = cards.get(3).getRank().getValue();
                 } else {
-                    secondComparator = cards.get(4).getNumber();
+                    secondComparator = cards.get(4).getRank().getValue();
                 }
             }
             firstComparator = 1 << cards.get(0).getSuit().getValue();
             isSuitMoreImportant = true;
-        } else if (getCountOfTopNumber(cards) == 4) {
-            rank = Rank.FOUR_OF_A_KIND;
-            firstComparator = getFourOfAKindNumber(cards);
+        } else if (getCountOfTopRank(cards) == 4) {
+            deckRank = DeckRank.FOUR_OF_A_KIND;
+            firstComparator = getFourOfAKindRank(cards);
             isSuitMoreImportant = false;
-        } else if (getCountOfNumber(cards) == 2) {
-            rank = Rank.FULL_HOUSE;
+        } else if (getCountOfRank(cards) == 2) {
+            deckRank = DeckRank.FULL_HOUSE;
             firstComparator = getSuitsForFullHouse(cards);
-            secondComparator = cards.get(2).getNumber();
+            secondComparator = cards.get(2).getRank().getValue();
             isSuitMoreImportant = true;
         } else if (getCountOfSuit(cards) == 1) {
-            rank = Rank.FLUSH;
+            deckRank = DeckRank.FLUSH;
             firstComparator = 1 << cards.get(0).getSuit().getValue();
-            secondComparator = cards.get(4).getNumber();
+            secondComparator = cards.get(4).getRank().getValue();
             isSuitMoreImportant = true;
         } else if (isSequence(cards)) {
-            rank = Rank.STRAIGHT;
-            if (cards.get(4).getNumber() == 14 && cards.get(3).getNumber() == 5) {
-                firstComparator= cards.get(3).getNumber();
+            deckRank = DeckRank.STRAIGHT;
+            if (cards.get(4).getRank() == Rank.ACE && cards.get(3).getRank() == Rank.FIVE) {
+                firstComparator= cards.get(3).getRank().getValue();
             } else {
-                firstComparator= cards.get(4).getNumber();
+                firstComparator= cards.get(4).getRank().getValue();
             }
             secondComparator = 1 << cards.get(4).getSuit().getValue();
             isSuitMoreImportant = false;
-        } else if (getCountOfTopNumber(cards) == 3) {
-            rank = Rank.THREE_OF_A_KIND;
-            firstComparator = getNumberForRank(cards);
+        } else if (getCountOfTopRank(cards) == 3) {
+            deckRank = DeckRank.THREE_OF_A_KIND;
+            firstComparator = getRankNumber(cards);
             isSuitMoreImportant = false;
-        } else if (getCountOfNumber(cards) == 3) {
-            rank = Rank.TWO_PAIRS;
-            firstComparator = getNumberForRank(cards);
+        } else if (getCountOfRank(cards) == 3) {
+            deckRank = DeckRank.TWO_PAIRS;
+            firstComparator = getRankNumber(cards);
             secondComparator = getSuitsForRank(cards);
             isSuitMoreImportant = false;
-        } else if (getCountOfNumber(cards) == 4) {
-            rank = Rank.ONE_PAIR;
-            firstComparator = getNumberForRank(cards);
+        } else if (getCountOfRank(cards) == 4) {
+            deckRank = DeckRank.ONE_PAIR;
+            firstComparator = getRankNumber(cards);
             secondComparator = getSuitsForRank(cards);
             isSuitMoreImportant = false;
         } else {
-            rank = Rank.NOTHING;
+            deckRank = DeckRank.NOTHING;
             // todo does the highest rank means all cards or only the top one card
-            firstComparator = cards.get(4).getNumber();
+            firstComparator = cards.get(4).getRank().getValue();
             secondComparator = 1 << cards.get(4).getSuit().getValue();
             isSuitMoreImportant = false;
         }
@@ -128,10 +127,10 @@ public class Hand implements Comparable<Hand> {
 
     @Override
     public int compareTo(Hand other) {
-        if (this.rank == other.rank) {
+        if (this.deckRank == other.deckRank) {
             return this.firstComparator == other.firstComparator ? this.secondComparator - other.secondComparator : this.firstComparator - other.firstComparator;
         } else {
-            return this.rank.getValue() - other.rank.getValue();
+            return this.deckRank.getValue() - other.deckRank.getValue();
         }
     }
 }

@@ -78,7 +78,7 @@ public class CardCommand {
         calculateRank(players);
         int winner = getWinner(players);
         players[winner].winRound(current);
-        printLine("Winner of round %d is %s with a %s", current+1, players[winner].getName(), players[winner].getCurrentHand().getRank().getName());
+        printLine("Winner of round %d is %s with a %s", current+1, players[winner].getName(), players[winner].getCurrentHand().getDeckRank().getName());
 
         current++;
         if (current == total) {
@@ -106,7 +106,7 @@ public class CardCommand {
     private void calculateRank(Player[] players) {
         for (Player player : players) {
             player.calculate();
-            printLine("%s has %s with %s", player.getName(), player.getCurrentHand().getRank().getName(), player.getCurrentHand().getDescription());
+            printLine("%s has %s with %s", player.getName(), player.getCurrentHand().getDeckRank().getName(), player.getCurrentHand().getDescription());
         }
     }
 
