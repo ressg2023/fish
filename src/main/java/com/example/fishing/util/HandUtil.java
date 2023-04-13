@@ -15,10 +15,10 @@ public class HandUtil {
         if (sortedCards.size() != 5) {
             return false;
         }
-        return sortedCards.get(0).getRank().getValue() + 1 == sortedCards.get(1).getRank().getValue()
-                && sortedCards.get(1).getRank().getValue() + 1 == sortedCards.get(2).getRank().getValue()
-                && sortedCards.get(2).getRank().getValue() + 1 == sortedCards.get(3).getRank().getValue()
-                && (sortedCards.get(3).getRank().getValue() + 1 == sortedCards.get(4).getRank().getValue() || (sortedCards.get(3).getRank() == Rank.FIVE && sortedCards.get(4).getRank() == Rank.ACE));
+        return sortedCards.get(0).isNext(sortedCards.get(1))
+                && sortedCards.get(1).isNext(sortedCards.get(2))
+                && sortedCards.get(2).isNext(sortedCards.get(3))
+                && (sortedCards.get(3).isNext(sortedCards.get(4)) || (sortedCards.get(3).getRank() == Rank.FIVE && sortedCards.get(4).getRank() == Rank.ACE));
     }
 
     public static int getCountOfTopRank(List<Card> sortedCards) {

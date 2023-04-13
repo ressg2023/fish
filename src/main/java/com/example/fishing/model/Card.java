@@ -17,6 +17,13 @@ public class Card implements Comparable<Card> {
         return suit.getShape() + rank.getName();
     }
 
+    public boolean isNext(Card card) {
+        if (card.rank == Rank.TWO && this.rank == Rank.ACE) {
+            return true;
+        }
+        return this.rank.getValue() + 1 == card.rank.getValue();
+    }
+
     @Override
     public int compareTo(Card other) {
         if (this.rank != other.rank) {

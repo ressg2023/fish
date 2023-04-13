@@ -1,7 +1,6 @@
 package com.example.fishing.model;
 
 import lombok.Getter;
-import org.checkerframework.checker.units.qual.C;
 
 public class Deck {
     @Getter
