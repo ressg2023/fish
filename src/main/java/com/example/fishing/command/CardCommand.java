@@ -17,8 +17,10 @@ import static com.example.fishing.util.PrintUtil.*;
 
 @ShellComponent
 public class CardCommand {
-    private Player[] players;
-    private Deck deck = null;
+    @VisibleForTesting
+    Player[] players;
+    @VisibleForTesting
+    Deck deck = null;
     private boolean started = false;
     private int total = 0;
     private int current = 0;
@@ -74,9 +76,9 @@ public class CardCommand {
         printLine("Start round %d", current+1);
 
         deck.shuffle();
-        dealCards(deck, players);
-        calculateRank(players);
-        int winner = getWinner(players);
+        dealCards();
+        calculateRank();
+        int winner = getWinner();
         players[winner].winRound(current);
         printLine("Winner of round %d is %s with a %s", current+1, players[winner].getName(), players[winner].getCurrentHand().getDeckRank().getName());
 
@@ -87,7 +89,8 @@ public class CardCommand {
         }
     }
 
-    private void dealCards(Deck deck, Player[] players) {
+    @VisibleForTesting
+    void dealCards() {
         for (Player player: players) {
             player.setCurrentHand(new Hand());
             printString("%-20s", player.getName());
@@ -103,7 +106,7 @@ public class CardCommand {
         }
     }
 
-    private void calculateRank(Player[] players) {
+    private void calculateRank() {
         for (Player player : players) {
             player.calculate();
             printLine("%s has %s with %s", player.getName(), player.getCurrentHand().getDeckRank().getName(), player.getCurrentHand().getDescription());
@@ -111,7 +114,7 @@ public class CardCommand {
     }
 
     @VisibleForTesting
-    int getWinner(Player[] players) {
+    int getWinner() {
         int winner = -1;
         for (int i=0; i<players.length; i++) {
             if (winner != -1) {
